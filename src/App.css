@@ -1,0 +1,48 @@
+.app {
+  width: 100vw;
+  height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 40px;
+  box-sizing: border-box;
+}
+
+.habit-lines {
+  width: 100%;
+  max-width: 1200px;
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.empty-slot {
+  height: 24px;
+  padding: 4px 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  opacity: 0;
+  transition: opacity 0.3s ease;
+}
+
+.habit-lines:hover .empty-slot {
+  opacity: 1;
+}
+
+.empty-slot:hover {
+  opacity: 1;
+}
+
+.empty-slot-text {
+  font-size: 12px;
+  color: #444;
+  text-transform: uppercase;
+  letter-spacing: 1px;
+  transition: color 0.2s ease;
+}
+
+.empty-slot:hover .empty-slot-text {
+  color: #666;
+}
