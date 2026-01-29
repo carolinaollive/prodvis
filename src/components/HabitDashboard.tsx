@@ -26,18 +26,18 @@ export function HabitDashboard({ habit, onClose, onToggleDay, onRename, onDelete
   const todayDate = new Date();
   todayDate.setHours(0, 0, 0, 0);
 
-  for (let i = 6; i >= -1; i--) {
+  // Show last 7 days (6 past days + today)
+  for (let i = 6; i >= 0; i--) {
     const date = new Date(todayDate);
     date.setDate(date.getDate() - i);
     const dateStr = date.toISOString().split('T')[0];
-    const dayName = date.toLocaleDateString('en-US', { weekday: 'short' });
-    const isFuture = date > todayDate;
+    const dayName = date.toLocaleDateString('en-US', { weekday: 'narrow' });
 
     recentDays.push({
       date: dateStr,
-      dayName: isFuture ? 'Tomorrow' : (i === 0 ? 'Today' : dayName),
+      dayName: i === 0 ? '!' : dayName,
       completed: recordMap.get(dateStr) || false,
-      isFuture,
+      isFuture: false,
     });
   }
 
