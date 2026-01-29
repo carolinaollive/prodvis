@@ -16,15 +16,16 @@ export interface HabitData {
   habits: Habit[];
 }
 
+// Refined, softer color palette
 export const HABIT_COLORS = [
-  '#FF6B6B', // Coral red
-  '#4ECDC4', // Teal
-  '#45B7D1', // Sky blue
-  '#96CEB4', // Sage green
-  '#FFEAA7', // Soft yellow
-  '#DDA0DD', // Plum
-  '#98D8C8', // Mint
+  '#E8A87C', // Warm peach
+  '#85CDCA', // Soft teal
+  '#E27D60', // Terracotta
+  '#C38D9E', // Dusty rose
+  '#41B3A3', // Sea green
+  '#659DBD', // Steel blue
+  '#DAAD86', // Sand
 ];
 
-export const DAYS_TO_DISPLAY = 90; // Show 90 days of history
+export const DAYS_TO_DISPLAY = 60; // Show 60 days - cleaner visual
 export const RENAME_COOLDOWN_DAYS = 45;

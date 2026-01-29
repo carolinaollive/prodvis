@@ -4,57 +4,67 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.6);
   display: flex;
   align-items: flex-start;
   justify-content: center;
   z-index: 100;
-  padding-top: 20px;
+  padding-top: 10px;
+  backdrop-filter: blur(2px);
 }
 
 .dashboard-panel {
-  background: rgba(20, 20, 20, 0.85);
-  border-radius: 10px;
-  padding: 12px;
-  width: 260px;
-  max-height: 90vh;
-  overflow-y: auto;
+  background: rgba(18, 18, 18, 0.95);
+  border-radius: 12px;
+  padding: 14px;
+  width: 240px;
   position: relative;
-  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  overflow: hidden;
+}
+
+.dashboard-accent {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 3px;
+  border-radius: 12px 12px 0 0;
 }
 
 .dashboard-close {
   position: absolute;
-  top: 8px;
-  right: 8px;
-  background: rgba(255, 255, 255, 0.1);
+  top: 10px;
+  right: 10px;
+  background: transparent;
   border: none;
-  font-size: 16px;
-  color: #999;
+  font-size: 18px;
+  color: #555;
   cursor: pointer;
   padding: 0;
-  width: 24px;
-  height: 24px;
+  width: 20px;
+  height: 20px;
   display: flex;
   align-items: center;
   justify-content: center;
   border-radius: 50%;
   transition: all 0.2s;
+  line-height: 1;
 }
 
 .dashboard-close:hover {
-  background: rgba(255, 255, 255, 0.2);
   color: #fff;
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .dashboard-header {
-  margin-bottom: 10px;
-  padding-right: 28px;
+  margin-bottom: 12px;
+  padding-right: 24px;
 }
 
 .dashboard-name {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
   margin: 0;
   transition: opacity 0.2s;
@@ -65,14 +75,14 @@
 }
 
 .dashboard-name.editable:hover {
-  opacity: 0.8;
+  opacity: 0.7;
 }
 
 .dashboard-name-input {
-  font-size: 14px;
+  font-size: 15px;
   font-weight: 600;
-  background: #2a2a2a;
-  border: 1px solid #444;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1px solid rgba(255, 255, 255, 0.1);
   border-radius: 4px;
   padding: 4px 8px;
   color: inherit;
@@ -82,109 +92,125 @@
 
 .dashboard-name-input:focus {
   outline: none;
-  border-color: #666;
+  border-color: rgba(255, 255, 255, 0.2);
 }
 
 .rename-notice {
   font-size: 9px;
-  color: #666;
+  color: #444;
   margin: 4px 0 0 0;
+  text-transform: lowercase;
+}
+
+.rename-notice.clickable {
+  color: #555;
 }
 
 .dashboard-days {
   display: flex;
-  gap: 3px;
-  margin-bottom: 10px;
-  flex-wrap: nowrap;
+  gap: 4px;
+  margin-bottom: 12px;
 }
 
 .day-button {
   flex: 1;
-  padding: 4px 2px;
-  background: #2a2a2a;
-  border: 1px solid #333;
-  border-radius: 4px;
+  padding: 6px 2px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 6px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 1px;
+  gap: 2px;
   transition: all 0.2s;
-  color: #888;
-  min-width: 0;
+  color: #666;
+  position: relative;
 }
 
-.day-button:hover:not(:disabled) {
+.day-button:hover {
   border-color: var(--habit-color);
-  background: #333;
+  background: rgba(255, 255, 255, 0.05);
 }
 
 .day-button.completed {
   background: var(--habit-color);
   border-color: var(--habit-color);
-  color: #000;
+  color: rgba(0, 0, 0, 0.8);
 }
 
-.day-button.future {
-  opacity: 0.3;
-  cursor: not-allowed;
+.day-button.today {
+  border-width: 2px;
+  border-color: rgba(255, 255, 255, 0.3);
+}
+
+.day-button.today.completed {
+  border-color: var(--habit-color);
 }
 
 .day-name {
-  font-size: 7px;
+  font-size: 8px;
   text-transform: uppercase;
-  letter-spacing: 0;
+  opacity: 0.7;
+}
+
+.day-num {
+  font-size: 11px;
+  font-weight: 600;
 }
 
 .day-check {
-  font-size: 10px;
-  font-weight: bold;
-  height: 12px;
+  position: absolute;
+  top: 2px;
+  right: 2px;
+  font-size: 7px;
 }
 
 .dashboard-stats {
   display: flex;
-  gap: 12px;
-  margin-bottom: 10px;
-  padding: 8px;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 6px;
+  gap: 8px;
+  margin-bottom: 12px;
 }
 
 .stat {
+  flex: 1;
   display: flex;
   flex-direction: column;
   align-items: center;
-  flex: 1;
+  padding: 8px;
+  background: rgba(255, 255, 255, 0.03);
+  border-radius: 6px;
 }
 
 .stat-value {
-  font-size: 18px;
+  font-size: 20px;
   font-weight: 700;
   color: #fff;
+  line-height: 1;
 }
 
 .stat-label {
   font-size: 8px;
-  color: #666;
+  color: #555;
   text-transform: uppercase;
-  letter-spacing: 0;
-  text-align: center;
+  margin-top: 2px;
 }
 
 .delete-button {
   width: 100%;
   padding: 6px;
   background: transparent;
-  border: 1px solid #ff4444;
-  color: #ff4444;
+  border: 1px solid rgba(255, 80, 80, 0.3);
+  color: rgba(255, 80, 80, 0.6);
   border-radius: 4px;
   cursor: pointer;
-  font-size: 10px;
+  font-size: 9px;
+  text-transform: lowercase;
   transition: all 0.2s;
 }
 
 .delete-button:hover {
-  background: #ff4444;
-  color: #000;
+  background: rgba(255, 80, 80, 0.1);
+  border-color: rgba(255, 80, 80, 0.5);
+  color: rgba(255, 80, 80, 0.9);
 }

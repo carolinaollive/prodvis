@@ -22,7 +22,7 @@ export function HabitDashboard({ habit, onClose, onToggleDay, onRename, onDelete
 
   const recordMap = new Map(habit.records.map(r => [r.date, r.completed]));
 
-  const recentDays: { date: string; dayName: string; completed: boolean; isFuture: boolean }[] = [];
+  const recentDays: { date: string; dayName: string; dayNum: number; completed: boolean; isToday: boolean }[] = [];
   const todayDate = new Date();
   todayDate.setHours(0, 0, 0, 0);
 
@@ -35,11 +35,15 @@ export function HabitDashboard({ habit, onClose, onToggleDay, onRename, onDelete
 
     recentDays.push({
       date: dateStr,
-      dayName: i === 0 ? '!' : dayName,
+      dayName,
+      dayNum: date.getDate(),
       completed: recordMap.get(dateStr) || false,
-      isFuture: false,
+      isToday: i === 0,
     });
   }
+
+  const totalCompleted = habit.records.filter(r => r.completed).length;
+  const currentStreak = calculateStreak(habit);
 
   const handleStartEdit = () => {
     if (canRename) {
@@ -60,12 +64,15 @@ export function HabitDashboard({ habit, onClose, onToggleDay, onRename, onDelete
       handleSaveEdit();
     } else if (e.key === 'Escape') {
       setIsEditing(false);
+      onClose();
     }
   };
 
   return (
     <div className="dashboard-overlay" onClick={onClose}>
       <div className="dashboard-panel" onClick={e => e.stopPropagation()}>
+        <div className="dashboard-accent" style={{ background: habit.color }} />
+
         <button className="dashboard-close" onClick={onClose}>×</button>
 
         <div className="dashboard-header">
@@ -85,11 +92,13 @@ export function HabitDashboard({ habit, onClose, onToggleDay, onRename, onDelete
               onClick={handleStartEdit}
               style={{ color: habit.color }}
             >
-              {habit.name || 'Unnamed Habit'}
+              {habit.name || 'Unnamed'}
             </h2>
           )}
-          {!canRename && (
-            <p className="rename-notice">Can rename in {daysUntilRename} days</p>
+          {canRename ? (
+            <p className="rename-notice clickable">click to rename</p>
+          ) : (
+            <p className="rename-notice">{daysUntilRename}d until rename</p>
           )}
         </div>
 
@@ -97,40 +106,36 @@ export function HabitDashboard({ habit, onClose, onToggleDay, onRename, onDelete
           {recentDays.map(day => (
             <button
               key={day.date}
-              className={`day-button ${day.completed ? 'completed' : ''} ${day.isFuture ? 'future' : ''}`}
-              onClick={() => !day.isFuture && onToggleDay(habit.id, day.date)}
-              disabled={day.isFuture}
-              style={{
-                '--habit-color': habit.color,
-              } as React.CSSProperties}
+              className={`day-button ${day.completed ? 'completed' : ''} ${day.isToday ? 'today' : ''}`}
+              onClick={() => onToggleDay(habit.id, day.date)}
+              style={{ '--habit-color': habit.color } as React.CSSProperties}
             >
               <span className="day-name">{day.dayName}</span>
-              <span className="day-check">{day.completed ? '✓' : ''}</span>
+              <span className="day-num">{day.dayNum}</span>
+              {day.completed && <span className="day-check">✓</span>}
             </button>
           ))}
         </div>
 
         <div className="dashboard-stats">
           <div className="stat">
-            <span className="stat-value">
-              {habit.records.filter(r => r.completed).length}
-            </span>
-            <span className="stat-label">days completed</span>
+            <span className="stat-value">{totalCompleted}</span>
+            <span className="stat-label">total</span>
           </div>
           <div className="stat">
-            <span className="stat-value">
-              {calculateStreak(habit)}
+            <span className="stat-value" style={{ color: currentStreak > 0 ? habit.color : undefined }}>
+              {currentStreak}
             </span>
-            <span className="stat-label">current streak</span>
+            <span className="stat-label">streak</span>
           </div>
         </div>
 
         <button className="delete-button" onClick={() => {
-          if (confirm('Delete this habit? This cannot be undone.')) {
+          if (confirm('Delete this habit?')) {
             onDelete(habit.id);
           }
         }}>
-          Delete Habit
+          delete
         </button>
       </div>
     </div>
@@ -145,7 +150,6 @@ function calculateStreak(habit: Habit): number {
   let streak = 0;
   let checkDate = new Date(today);
 
-  // Check if today is completed, if not start from yesterday
   const todayStr = today.toISOString().split('T')[0];
   if (!recordMap.get(todayStr)) {
     checkDate.setDate(checkDate.getDate() - 1);
