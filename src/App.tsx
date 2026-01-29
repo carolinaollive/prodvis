@@ -8,6 +8,8 @@ import './App.css';
 function App() {
   const [habits, setHabits] = useState<Habit[]>([]);
   const [selectedHabitId, setSelectedHabitId] = useState<string | null>(null);
+  const [showAddModal, setShowAddModal] = useState(false);
+  const [newHabitName, setNewHabitName] = useState('');
 
   useEffect(() => {
     const data = loadHabits();
@@ -20,12 +22,18 @@ function App() {
 
   const handleAddHabit = useCallback(() => {
     if (habits.length >= 7) return;
-    const name = prompt('Name your new habit/practice:');
-    if (name?.trim()) {
-      const newHabit = createHabit(name.trim(), habits);
+    setNewHabitName('');
+    setShowAddModal(true);
+  }, [habits]);
+
+  const handleConfirmAdd = useCallback(() => {
+    if (newHabitName.trim()) {
+      const newHabit = createHabit(newHabitName.trim(), habits);
       setHabits(prev => [...prev, newHabit]);
     }
-  }, [habits]);
+    setShowAddModal(false);
+    setNewHabitName('');
+  }, [newHabitName, habits]);
 
   const handleToggleDay = useCallback((habitId: string, date: string) => {
     setHabits(prev => prev.map(habit => {
@@ -94,6 +102,28 @@ function App() {
           )
         ))}
       </div>
+
+      {showAddModal && (
+        <div className="add-modal-overlay" onClick={() => setShowAddModal(false)}>
+          <div className="add-modal" onClick={e => e.stopPropagation()}>
+            <input
+              type="text"
+              value={newHabitName}
+              onChange={e => setNewHabitName(e.target.value)}
+              onKeyDown={e => {
+                if (e.key === 'Enter') handleConfirmAdd();
+                if (e.key === 'Escape') setShowAddModal(false);
+              }}
+              placeholder="Name your habit..."
+              autoFocus
+            />
+            <div className="add-modal-buttons">
+              <button onClick={() => setShowAddModal(false)}>Cancel</button>
+              <button onClick={handleConfirmAdd} className="confirm">Add</button>
+            </div>
+          </div>
+        </div>
+      )}
 
       <HabitDashboard
         habit={selectedHabit}

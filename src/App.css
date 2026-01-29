@@ -2,33 +2,29 @@
   width: 100vw;
   height: 100vh;
   display: flex;
-  align-items: center;
+  align-items: flex-start;
   justify-content: center;
-  padding: 40px;
+  padding: 20px;
   box-sizing: border-box;
+  background: transparent;
 }
 
 .habit-lines {
   width: 100%;
-  max-width: 1200px;
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 6px;
 }
 
 .empty-slot {
-  height: 24px;
-  padding: 4px 0;
+  height: 20px;
+  padding: 2px 0;
   display: flex;
   align-items: center;
-  justify-content: center;
+  justify-content: flex-start;
   cursor: pointer;
-  opacity: 0;
+  opacity: 0.3;
   transition: opacity 0.3s ease;
-}
-
-.habit-lines:hover .empty-slot {
-  opacity: 1;
 }
 
 .empty-slot:hover {
@@ -36,13 +32,90 @@
 }
 
 .empty-slot-text {
-  font-size: 12px;
-  color: #444;
+  font-size: 10px;
+  color: #555;
   text-transform: uppercase;
   letter-spacing: 1px;
   transition: color 0.2s ease;
 }
 
 .empty-slot:hover .empty-slot-text {
+  color: #888;
+}
+
+/* Add Habit Modal */
+.add-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.8);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 200;
+}
+
+.add-modal {
+  background: #1a1a1a;
+  border-radius: 12px;
+  padding: 20px;
+  min-width: 280px;
+  box-shadow: 0 10px 40px rgba(0, 0, 0, 0.5);
+}
+
+.add-modal input {
+  width: 100%;
+  padding: 12px;
+  font-size: 16px;
+  background: #2a2a2a;
+  border: 2px solid #444;
+  border-radius: 8px;
+  color: #fff;
+  box-sizing: border-box;
+  margin-bottom: 16px;
+}
+
+.add-modal input:focus {
+  outline: none;
+  border-color: #666;
+}
+
+.add-modal input::placeholder {
   color: #666;
+}
+
+.add-modal-buttons {
+  display: flex;
+  gap: 10px;
+  justify-content: flex-end;
+}
+
+.add-modal-buttons button {
+  padding: 8px 16px;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  font-size: 14px;
+  transition: all 0.2s;
+}
+
+.add-modal-buttons button:first-child {
+  background: #333;
+  color: #888;
+}
+
+.add-modal-buttons button:first-child:hover {
+  background: #444;
+  color: #fff;
+}
+
+.add-modal-buttons button.confirm {
+  background: #4ECDC4;
+  color: #000;
+}
+
+.add-modal-buttons button.confirm:hover {
+  background: #5fe0d7;
 }

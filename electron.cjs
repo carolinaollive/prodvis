@@ -1,26 +1,37 @@
-const { app, BrowserWindow } = require('electron');
+const { app, BrowserWindow, screen } = require('electron');
 const path = require('path');
 
 function createWindow() {
+  const primaryDisplay = screen.getPrimaryDisplay();
+  const { width: screenWidth } = primaryDisplay.workAreaSize;
+
+  const winWidth = 400;
+  const winHeight = 280;
+
   const win = new BrowserWindow({
-    width: 1200,
-    height: 400,
-    minWidth: 800,
-    minHeight: 300,
-    frame: true,
-    titleBarStyle: 'hiddenInset',
-    backgroundColor: '#0a0a0a',
+    width: winWidth,
+    height: winHeight,
+    x: screenWidth - winWidth - 20,
+    y: 40,
+    frame: false,
+    transparent: true,
+    alwaysOnTop: true,
+    hasShadow: false,
+    resizable: false,
+    skipTaskbar: true,
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
     },
   });
 
+  // Make window click-through when not focused (optional)
+  // win.setIgnoreMouseEvents(true, { forward: true });
+
   // In production, load the built files
   if (app.isPackaged) {
     win.loadFile(path.join(__dirname, 'dist', 'index.html'));
   } else {
-    // In development, load from Vite dev server
     win.loadURL('http://localhost:5173');
   }
 }
