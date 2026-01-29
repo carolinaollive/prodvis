@@ -1,4 +1,4 @@
-import { useMemo } from 'react';
+import { useMemo, useState, useRef, useCallback } from 'react';
 import type { Habit } from '../types';
 import { DAYS_TO_DISPLAY } from '../types';
 import './HabitLine.css';
@@ -45,9 +45,54 @@ function getDayStatuses(habit: Habit): DayStatus[] {
 
 export function HabitLine({ habit, onClick }: HabitLineProps) {
   const dayStatuses = useMemo(() => getDayStatuses(habit), [habit]);
+  const [showTooltip, setShowTooltip] = useState(false);
+  const [isClickable, setIsClickable] = useState(false);
+  const tooltipTimer = useRef<number | null>(null);
+  const clickableTimer = useRef<number | null>(null);
+
+  const handleMouseEnter = useCallback(() => {
+    // Show tooltip after 1.5s
+    tooltipTimer.current = window.setTimeout(() => {
+      setShowTooltip(true);
+    }, 1500);
+
+    // Make clickable after 2s
+    clickableTimer.current = window.setTimeout(() => {
+      setIsClickable(true);
+    }, 2000);
+  }, []);
+
+  const handleMouseLeave = useCallback(() => {
+    if (tooltipTimer.current) {
+      clearTimeout(tooltipTimer.current);
+      tooltipTimer.current = null;
+    }
+    if (clickableTimer.current) {
+      clearTimeout(clickableTimer.current);
+      clickableTimer.current = null;
+    }
+    setShowTooltip(false);
+    setIsClickable(false);
+  }, []);
+
+  const handleClick = useCallback(() => {
+    if (isClickable) {
+      onClick();
+    }
+  }, [isClickable, onClick]);
 
   return (
-    <div className="habit-line-container" onClick={onClick}>
+    <div
+      className={`habit-line-container ${isClickable ? 'clickable' : ''}`}
+      onClick={handleClick}
+      onMouseEnter={handleMouseEnter}
+      onMouseLeave={handleMouseLeave}
+    >
+      {showTooltip && (
+        <div className="habit-tooltip" style={{ color: habit.color }}>
+          {habit.name}
+        </div>
+      )}
       <svg
         className="habit-line"
         viewBox={`0 0 ${DAYS_TO_DISPLAY * 10} 20`}

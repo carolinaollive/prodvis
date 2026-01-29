@@ -1,12 +1,17 @@
 .habit-line-container {
   width: 100%;
-  height: 20px;
-  cursor: pointer;
+  height: 14px;
+  cursor: default;
   transition: transform 0.2s ease, filter 0.2s ease;
-  padding: 2px 0;
+  padding: 1px 0;
+  position: relative;
 }
 
-.habit-line-container:hover {
+.habit-line-container.clickable {
+  cursor: pointer;
+}
+
+.habit-line-container.clickable:hover {
   transform: scaleY(1.5);
   filter: brightness(1.2);
 }
@@ -19,4 +24,20 @@
 
 .habit-line-rect {
   transition: all 0.3s ease;
+}
+
+.habit-tooltip {
+  position: absolute;
+  left: 0;
+  top: -18px;
+  font-size: 10px;
+  font-weight: 500;
+  white-space: nowrap;
+  opacity: 0.9;
+  animation: fadeIn 0.2s ease;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(4px); }
+  to { opacity: 0.9; transform: translateY(0); }
 }
