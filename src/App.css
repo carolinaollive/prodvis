@@ -7,6 +7,7 @@
   padding: 12px;
   box-sizing: border-box;
   background: transparent;
+  pointer-events: none;
 }
 
 .habit-lines {
@@ -25,10 +26,12 @@
   cursor: pointer;
   opacity: 0;
   transition: opacity 0.4s ease;
+  pointer-events: none;
 }
 
 .habit-lines:hover .empty-slot {
   opacity: 0.4;
+  pointer-events: auto;
 }
 
 .empty-slot:hover {
@@ -62,6 +65,7 @@
   z-index: 200;
   padding-top: 40px;
   backdrop-filter: blur(4px);
+  pointer-events: auto;
 }
 
 .add-modal {

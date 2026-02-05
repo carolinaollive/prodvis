@@ -10,11 +10,22 @@
   gap: 6px;
 }
 
-.habit-line-container.clickable {
-  cursor: pointer;
+/* Click-through when inactive */
+.habit-line-container.inactive {
+  pointer-events: none;
 }
 
-.habit-line-container.clickable:hover {
+/* Only the SVG line itself captures hover */
+.habit-line-container.inactive .habit-line {
+  pointer-events: auto;
+}
+
+.habit-line-container.active {
+  cursor: pointer;
+  pointer-events: auto;
+}
+
+.habit-line-container.active:hover {
   transform: scaleY(1.4);
 }
 
@@ -35,6 +46,7 @@
   min-width: 16px;
   text-align: right;
   transition: opacity 0.2s ease;
+  pointer-events: none;
 }
 
 .habit-line-container:hover .habit-initials {
@@ -51,27 +63,33 @@
   transition: all 0.3s ease;
 }
 
-.habit-tooltip {
+/* Tooltip container - clips the tooltip and positions it */
+.habit-tooltip-container {
   position: absolute;
   left: 24px;
-  top: -16px;
+  top: 0;
+  height: 100%;
+  overflow: visible;
+  pointer-events: none;
+}
+
+/* Tooltip slides up from behind the line */
+.habit-tooltip {
+  position: absolute;
+  bottom: 100%;
+  left: 0;
   font-size: 9px;
   font-weight: 500;
   white-space: nowrap;
-  opacity: 0.9;
-  animation: tooltip-in 0.2s ease;
   text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  opacity: 0;
+  transform: translateY(10px);
+  transition: opacity 0.25s ease, transform 0.25s ease;
 }
 
-@keyframes tooltip-in {
-  from {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-  to {
-    opacity: 0.9;
-    transform: translateY(0);
-  }
+.habit-tooltip.visible {
+  opacity: 0.9;
+  transform: translateY(-2px);
 }
 
 .hover-progress {
@@ -83,4 +101,5 @@
   opacity: 0.5;
   border-radius: 1px;
   transition: width 0.05s linear;
+  pointer-events: none;
 }

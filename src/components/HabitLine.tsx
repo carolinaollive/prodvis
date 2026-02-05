@@ -56,10 +56,10 @@ function getInitials(name: string): string {
 export function HabitLine({ habit, onClick }: HabitLineProps) {
   const { statuses: dayStatuses, todayCompleted } = useMemo(() => getDayStatuses(habit), [habit]);
   const [showTooltip, setShowTooltip] = useState(false);
-  const [isClickable, setIsClickable] = useState(false);
+  const [isActive, setIsActive] = useState(false);
   const [hoverProgress, setHoverProgress] = useState(0);
   const tooltipTimer = useRef<number | null>(null);
-  const clickableTimer = useRef<number | null>(null);
+  const activeTimer = useRef<number | null>(null);
   const progressInterval = useRef<number | null>(null);
 
   const handleMouseEnter = useCallback(() => {
@@ -68,9 +68,9 @@ export function HabitLine({ habit, onClick }: HabitLineProps) {
       setShowTooltip(true);
     }, 1500);
 
-    // Make clickable after 2s
-    clickableTimer.current = window.setTimeout(() => {
-      setIsClickable(true);
+    // Make active (clickable, not click-through) after 2s
+    activeTimer.current = window.setTimeout(() => {
+      setIsActive(true);
     }, 2000);
 
     // Progress indicator
@@ -90,29 +90,29 @@ export function HabitLine({ habit, onClick }: HabitLineProps) {
       clearTimeout(tooltipTimer.current);
       tooltipTimer.current = null;
     }
-    if (clickableTimer.current) {
-      clearTimeout(clickableTimer.current);
-      clickableTimer.current = null;
+    if (activeTimer.current) {
+      clearTimeout(activeTimer.current);
+      activeTimer.current = null;
     }
     if (progressInterval.current) {
       clearInterval(progressInterval.current);
       progressInterval.current = null;
     }
     setShowTooltip(false);
-    setIsClickable(false);
+    setIsActive(false);
     setHoverProgress(0);
   }, []);
 
   const handleClick = useCallback(() => {
-    if (isClickable) {
+    if (isActive) {
       onClick();
     }
-  }, [isClickable, onClick]);
+  }, [isActive, onClick]);
 
   useEffect(() => {
     return () => {
       if (tooltipTimer.current) clearTimeout(tooltipTimer.current);
-      if (clickableTimer.current) clearTimeout(clickableTimer.current);
+      if (activeTimer.current) clearTimeout(activeTimer.current);
       if (progressInterval.current) clearInterval(progressInterval.current);
     };
   }, []);
@@ -121,7 +121,7 @@ export function HabitLine({ habit, onClick }: HabitLineProps) {
 
   return (
     <div
-      className={`habit-line-container ${isClickable ? 'clickable' : ''} ${!todayCompleted ? 'needs-attention' : ''}`}
+      className={`habit-line-container ${isActive ? 'active' : 'inactive'} ${!todayCompleted ? 'needs-attention' : ''}`}
       onClick={handleClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
@@ -131,11 +131,11 @@ export function HabitLine({ habit, onClick }: HabitLineProps) {
         {initials}
       </span>
 
-      {showTooltip && (
-        <div className="habit-tooltip" style={{ color: habit.color }}>
+      <div className="habit-tooltip-container">
+        <div className={`habit-tooltip ${showTooltip ? 'visible' : ''}`} style={{ color: habit.color }}>
           {habit.name}
         </div>
-      )}
+      </div>
 
       {hoverProgress > 0 && hoverProgress < 1 && (
         <div className="hover-progress" style={{ width: `${hoverProgress * 100}%` }} />
@@ -186,7 +186,7 @@ export function HabitLine({ habit, onClick }: HabitLineProps) {
           rx="5"
           fill={`url(#gradient-${habit.id})`}
           className="habit-line-rect"
-          filter={isClickable ? `url(#glow-${habit.id})` : undefined}
+          filter={isActive ? `url(#glow-${habit.id})` : undefined}
         />
       </svg>
     </div>

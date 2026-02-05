@@ -11,6 +11,7 @@
   z-index: 100;
   padding-top: 10px;
   backdrop-filter: blur(2px);
+  pointer-events: auto;
 }
 
 .dashboard-panel {
@@ -18,10 +19,11 @@
   border-radius: 12px;
   padding: 14px;
   width: 240px;
+  max-height: 80vh;
+  overflow-y: auto;
   position: relative;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
   border: 1px solid rgba(255, 255, 255, 0.08);
-  overflow: hidden;
 }
 
 .dashboard-accent {
@@ -213,4 +215,22 @@
   background: rgba(255, 80, 80, 0.1);
   border-color: rgba(255, 80, 80, 0.5);
   color: rgba(255, 80, 80, 0.9);
+}
+
+/* Custom scrollbar */
+.dashboard-panel::-webkit-scrollbar {
+  width: 4px;
+}
+
+.dashboard-panel::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.dashboard-panel::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 2px;
+}
+
+.dashboard-panel::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.25);
 }
