@@ -1,12 +1,13 @@
 .habit-line-container {
   width: 100%;
-  height: 16px;
+  height: 20px;
   cursor: default;
-  padding: 2px 0;
+  padding: 3px 0;
   position: relative;
   display: flex;
   align-items: center;
-  gap: 6px;
+  gap: 8px;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 /* Click-through when inactive */
@@ -25,37 +26,47 @@
 }
 
 .habit-line-container.needs-attention .habit-line-rect {
-  animation: subtle-glow 2s ease-in-out infinite;
+  animation: subtle-pulse 2.5s ease-in-out infinite;
 }
 
-@keyframes subtle-glow {
-  0%, 100% { filter: brightness(1); }
-  50% { filter: brightness(1.3); }
+@keyframes subtle-pulse {
+  0%, 100% {
+    filter: brightness(1);
+    opacity: 1;
+  }
+  50% {
+    filter: brightness(1.2);
+    opacity: 0.85;
+  }
 }
 
+/* Icon/Label styling - LARGER */
 .habit-icon {
-  font-size: 10px;
-  opacity: 0.7;
-  min-width: 14px;
+  font-size: 13px;
+  opacity: 0.85;
+  min-width: 18px;
   text-align: center;
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: none;
+  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
 }
 
 .habit-line-container:hover .habit-icon {
   opacity: 1;
-  transform: scale(1.1);
+  transform: scale(1.15);
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
 }
 
+/* Line wrapper for scaling */
 .habit-line-wrapper {
   flex: 1;
   height: 100%;
   position: relative;
-  transition: transform 0.2s ease;
+  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .habit-line-container.active:hover .habit-line-wrapper {
-  transform: scaleY(1.4);
+  transform: scaleY(1.5);
 }
 
 .habit-line {
@@ -65,21 +76,22 @@
 }
 
 .habit-line-rect {
-  transition: all 0.3s ease;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
-/* Tooltip - positioned outside the scaled wrapper */
+/* Tooltip - elegant and readable */
 .habit-tooltip {
   position: absolute;
-  left: 20px;
-  bottom: calc(100% + 4px);
-  font-size: 9px;
-  font-weight: 500;
+  left: 26px;
+  bottom: calc(100% + 6px);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.3px;
   white-space: nowrap;
-  text-shadow: 0 1px 3px rgba(0,0,0,0.6);
+  text-shadow: 0 1px 4px rgba(0,0,0,0.7);
   opacity: 0;
-  transform: translateY(8px);
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transform: translateY(6px);
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
   pointer-events: none;
   z-index: 10;
 }
@@ -92,27 +104,39 @@
 /* Streak flame indicator */
 .streak-flame {
   position: absolute;
-  right: 4px;
+  right: 6px;
   top: 50%;
   transform: translateY(-50%);
-  font-size: 8px;
-  opacity: 0.8;
-  animation: flame-flicker 1s ease-in-out infinite;
+  font-size: 10px;
+  opacity: 0.9;
+  animation: flame-dance 1.5s ease-in-out infinite;
   pointer-events: none;
+  filter: drop-shadow(0 1px 3px rgba(255,100,0,0.4));
 }
 
-@keyframes flame-flicker {
-  0%, 100% { opacity: 0.8; transform: translateY(-50%) scale(1); }
-  50% { opacity: 1; transform: translateY(-50%) scale(1.1); }
+@keyframes flame-dance {
+  0%, 100% {
+    opacity: 0.9;
+    transform: translateY(-50%) scale(1) rotate(-2deg);
+  }
+  33% {
+    opacity: 1;
+    transform: translateY(-52%) scale(1.05) rotate(2deg);
+  }
+  66% {
+    opacity: 0.95;
+    transform: translateY(-48%) scale(1.02) rotate(-1deg);
+  }
 }
 
+/* Hover progress indicator */
 .hover-progress {
   position: absolute;
   bottom: 0;
-  left: 14px;
-  height: 1px;
-  background: var(--habit-color);
-  opacity: 0.6;
+  left: 18px;
+  height: 2px;
+  background: linear-gradient(90deg, var(--habit-color) 0%, transparent 100%);
+  opacity: 0.7;
   border-radius: 1px;
   transition: width 0.05s linear;
   pointer-events: none;

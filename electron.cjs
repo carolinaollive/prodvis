@@ -8,14 +8,14 @@ function createWindow() {
   const primaryDisplay = screen.getPrimaryDisplay();
   const { width: screenWidth } = primaryDisplay.workAreaSize;
 
-  const winWidth = 280;
-  const winHeight = 140;
+  const winWidth = 320;
+  const winHeight = 180;
 
   win = new BrowserWindow({
     width: winWidth,
     height: winHeight,
-    x: screenWidth - winWidth - 5,
-    y: 28,
+    x: screenWidth - winWidth - 12,
+    y: 36,
     frame: false,
     transparent: true,
     alwaysOnTop: true,
@@ -28,6 +28,10 @@ function createWindow() {
     },
   });
 
+  // Keep window level above others and visible on all workspaces
+  win.setAlwaysOnTop(true, 'floating', 1);
+  win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+
   // In production, load the built files
   if (app.isPackaged) {
     win.loadFile(path.join(__dirname, 'dist', 'index.html'));
@@ -37,40 +41,52 @@ function createWindow() {
 }
 
 function createTray() {
-  // Create a simple tray icon (16x16 colored circle)
-  const iconSize = 16;
-  const canvas = `
-    <svg width="${iconSize}" height="${iconSize}" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="8" cy="8" r="6" fill="#E8A87C"/>
-      <circle cx="8" cy="8" r="3" fill="#85CDCA"/>
+  // Create a proper template image for macOS menu bar (22x22)
+  // Using horizontal bars to represent habit tracking lines
+  const iconSvg = `
+    <svg width="22" height="22" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
+      <rect x="4" y="5" width="14" height="2" rx="1" fill="black"/>
+      <rect x="4" y="10" width="10" height="2" rx="1" fill="black"/>
+      <rect x="4" y="15" width="12" height="2" rx="1" fill="black"/>
     </svg>
   `;
 
   const icon = nativeImage.createFromDataURL(
-    `data:image/svg+xml;base64,${Buffer.from(canvas).toString('base64')}`
+    `data:image/svg+xml;base64,${Buffer.from(iconSvg.trim()).toString('base64')}`
   );
 
-  tray = new Tray(icon.resize({ width: 16, height: 16 }));
+  // Mark as template image so macOS auto-handles dark/light mode
+  icon.setTemplateImage(true);
+
+  tray = new Tray(icon);
   tray.setToolTip('Habit Tracker');
 
   const contextMenu = Menu.buildFromTemplate([
     {
-      label: 'Show/Hide',
+      label: 'Show Widget',
+      click: () => win.show()
+    },
+    {
+      label: 'Hide Widget',
+      click: () => win.hide()
+    },
+    { type: 'separator' },
+    {
+      label: 'Reset Position',
       click: () => {
-        if (win.isVisible()) {
-          win.hide();
-        } else {
-          win.show();
-        }
+        const primaryDisplay = screen.getPrimaryDisplay();
+        const { width: screenWidth } = primaryDisplay.workAreaSize;
+        win.setPosition(screenWidth - 320 - 12, 36);
+        win.show();
       }
     },
     { type: 'separator' },
-    { label: 'Quit', click: () => app.quit() }
+    { label: 'Quit Habit Tracker', click: () => app.quit() }
   ]);
 
   tray.setContextMenu(contextMenu);
 
-  // Click on tray to toggle visibility
+  // Click on tray toggles visibility
   tray.on('click', () => {
     if (win.isVisible()) {
       win.hide();
