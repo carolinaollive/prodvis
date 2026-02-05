@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from 'react';
 import type { Habit } from './types';
+import { HABIT_ICONS } from './types';
 import { loadHabits, saveHabits, createHabit } from './storage';
 import { HabitLine } from './components/HabitLine';
 import { HabitDashboard } from './components/HabitDashboard';
@@ -10,6 +11,7 @@ function App() {
   const [selectedHabitId, setSelectedHabitId] = useState<string | null>(null);
   const [showAddModal, setShowAddModal] = useState(false);
   const [newHabitName, setNewHabitName] = useState('');
+  const [newHabitIcon, setNewHabitIcon] = useState(HABIT_ICONS[0]);
 
   useEffect(() => {
     const data = loadHabits();
@@ -23,17 +25,25 @@ function App() {
   const handleAddHabit = useCallback(() => {
     if (habits.length >= 7) return;
     setNewHabitName('');
+    setNewHabitIcon(HABIT_ICONS[0]);
     setShowAddModal(true);
   }, [habits]);
 
   const handleConfirmAdd = useCallback(() => {
     if (newHabitName.trim()) {
-      const newHabit = createHabit(newHabitName.trim(), habits);
+      const newHabit = createHabit(newHabitName.trim(), habits, newHabitIcon);
       setHabits(prev => [...prev, newHabit]);
     }
     setShowAddModal(false);
     setNewHabitName('');
-  }, [newHabitName, habits]);
+  }, [newHabitName, habits, newHabitIcon]);
+
+  const handleChangeIcon = useCallback((habitId: string, icon: string) => {
+    setHabits(prev => prev.map(habit => {
+      if (habit.id !== habitId) return habit;
+      return { ...habit, icon };
+    }));
+  }, []);
 
   const handleToggleDay = useCallback((habitId: string, date: string) => {
     setHabits(prev => prev.map(habit => {
@@ -117,6 +127,17 @@ function App() {
               placeholder="Name your habit..."
               autoFocus
             />
+            <div className="icon-picker">
+              {HABIT_ICONS.slice(0, 10).map(icon => (
+                <button
+                  key={icon}
+                  className={`icon-option ${newHabitIcon === icon ? 'selected' : ''}`}
+                  onClick={() => setNewHabitIcon(icon)}
+                >
+                  {icon}
+                </button>
+              ))}
+            </div>
             <div className="add-modal-buttons">
               <button onClick={() => setShowAddModal(false)}>Cancel</button>
               <button onClick={handleConfirmAdd} className="confirm">Add</button>
@@ -131,6 +152,7 @@ function App() {
         onToggleDay={handleToggleDay}
         onRename={handleRename}
         onDelete={handleDelete}
+        onChangeIcon={handleChangeIcon}
       />
     </div>
   );

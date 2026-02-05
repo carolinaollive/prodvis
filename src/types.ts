@@ -7,10 +7,18 @@ export interface Habit {
   id: string;
   name: string;
   color: string;
+  icon: string; // Emoji icon for the habit
   createdAt: string; // ISO date string
   lastRenamedAt: string; // ISO date string - for 45-day rename restriction
   records: DayRecord[];
 }
+
+// Default icons for habit selection
+export const HABIT_ICONS = [
+  '💪', '📚', '🧘', '💧', '🏃', '✍️', '🎯',
+  '💤', '🥗', '🧠', '🎨', '🎵', '💊', '🌅',
+  '🧹', '💰', '📱', '🌿', '❤️', '⭐',
+];
 
 export interface HabitData {
   habits: Habit[];

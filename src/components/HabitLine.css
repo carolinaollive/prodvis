@@ -2,7 +2,6 @@
   width: 100%;
   height: 16px;
   cursor: default;
-  transition: transform 0.3s ease, opacity 0.3s ease;
   padding: 2px 0;
   position: relative;
   display: flex;
@@ -25,36 +24,42 @@
   pointer-events: auto;
 }
 
-.habit-line-container.active:hover {
-  transform: scaleY(1.4);
+.habit-line-container.needs-attention .habit-line-rect {
+  animation: subtle-glow 2s ease-in-out infinite;
 }
 
-.habit-line-container.needs-attention {
-  animation: subtle-pulse 3s ease-in-out infinite;
+@keyframes subtle-glow {
+  0%, 100% { filter: brightness(1); }
+  50% { filter: brightness(1.3); }
 }
 
-@keyframes subtle-pulse {
-  0%, 100% { opacity: 1; }
-  50% { opacity: 0.7; }
-}
-
-.habit-initials {
-  font-size: 8px;
-  font-weight: 600;
-  letter-spacing: 0.5px;
-  opacity: 0.6;
-  min-width: 16px;
-  text-align: right;
-  transition: opacity 0.2s ease;
+.habit-icon {
+  font-size: 10px;
+  opacity: 0.7;
+  min-width: 14px;
+  text-align: center;
+  transition: opacity 0.2s ease, transform 0.2s ease;
   pointer-events: none;
 }
 
-.habit-line-container:hover .habit-initials {
+.habit-line-container:hover .habit-icon {
   opacity: 1;
+  transform: scale(1.1);
+}
+
+.habit-line-wrapper {
+  flex: 1;
+  height: 100%;
+  position: relative;
+  transition: transform 0.2s ease;
+}
+
+.habit-line-container.active:hover .habit-line-wrapper {
+  transform: scaleY(1.4);
 }
 
 .habit-line {
-  flex: 1;
+  width: 100%;
   height: 100%;
   display: block;
 }
@@ -63,42 +68,51 @@
   transition: all 0.3s ease;
 }
 
-/* Tooltip container - clips the tooltip and positions it */
-.habit-tooltip-container {
-  position: absolute;
-  left: 24px;
-  top: 0;
-  height: 100%;
-  overflow: visible;
-  pointer-events: none;
-}
-
-/* Tooltip slides up from behind the line */
+/* Tooltip - positioned outside the scaled wrapper */
 .habit-tooltip {
   position: absolute;
-  bottom: 100%;
-  left: 0;
+  left: 20px;
+  bottom: calc(100% + 4px);
   font-size: 9px;
   font-weight: 500;
   white-space: nowrap;
-  text-shadow: 0 1px 2px rgba(0,0,0,0.5);
+  text-shadow: 0 1px 3px rgba(0,0,0,0.6);
   opacity: 0;
-  transform: translateY(10px);
-  transition: opacity 0.25s ease, transform 0.25s ease;
+  transform: translateY(8px);
+  transition: opacity 0.2s ease, transform 0.2s ease;
+  pointer-events: none;
+  z-index: 10;
 }
 
 .habit-tooltip.visible {
-  opacity: 0.9;
-  transform: translateY(-2px);
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Streak flame indicator */
+.streak-flame {
+  position: absolute;
+  right: 4px;
+  top: 50%;
+  transform: translateY(-50%);
+  font-size: 8px;
+  opacity: 0.8;
+  animation: flame-flicker 1s ease-in-out infinite;
+  pointer-events: none;
+}
+
+@keyframes flame-flicker {
+  0%, 100% { opacity: 0.8; transform: translateY(-50%) scale(1); }
+  50% { opacity: 1; transform: translateY(-50%) scale(1.1); }
 }
 
 .hover-progress {
   position: absolute;
   bottom: 0;
-  left: 22px;
+  left: 14px;
   height: 1px;
   background: var(--habit-color);
-  opacity: 0.5;
+  opacity: 0.6;
   border-radius: 1px;
   transition: width 0.05s linear;
   pointer-events: none;

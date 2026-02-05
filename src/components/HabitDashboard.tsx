@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import type { Habit } from '../types';
+import { HABIT_ICONS } from '../types';
 import { canRenameHabit, getDaysUntilRename } from '../storage';
 import './HabitDashboard.css';
 
@@ -9,11 +10,13 @@ interface HabitDashboardProps {
   onToggleDay: (habitId: string, date: string) => void;
   onRename: (habitId: string, newName: string) => void;
   onDelete: (habitId: string) => void;
+  onChangeIcon: (habitId: string, icon: string) => void;
 }
 
-export function HabitDashboard({ habit, onClose, onToggleDay, onRename, onDelete }: HabitDashboardProps) {
+export function HabitDashboard({ habit, onClose, onToggleDay, onRename, onDelete, onChangeIcon }: HabitDashboardProps) {
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState('');
+  const [showIconPicker, setShowIconPicker] = useState(false);
 
   if (!habit) return null;
 
@@ -44,6 +47,10 @@ export function HabitDashboard({ habit, onClose, onToggleDay, onRename, onDelete
 
   const totalCompleted = habit.records.filter(r => r.completed).length;
   const currentStreak = calculateStreak(habit);
+  const bestStreak = calculateBestStreak(habit);
+  const completionRate = calculateCompletionRate(habit);
+  const level = Math.floor(totalCompleted / 10) + 1;
+  const xpToNext = 10 - (totalCompleted % 10);
 
   const handleStartEdit = () => {
     if (canRename) {
@@ -76,30 +83,71 @@ export function HabitDashboard({ habit, onClose, onToggleDay, onRename, onDelete
         <button className="dashboard-close" onClick={onClose}>×</button>
 
         <div className="dashboard-header">
-          {isEditing ? (
-            <input
-              type="text"
-              value={editName}
-              onChange={e => setEditName(e.target.value)}
-              onBlur={handleSaveEdit}
-              onKeyDown={handleKeyDown}
-              className="dashboard-name-input"
-              autoFocus
-            />
-          ) : (
-            <h2
-              className={`dashboard-name ${canRename ? 'editable' : ''}`}
-              onClick={handleStartEdit}
-              style={{ color: habit.color }}
+          <div className="header-row">
+            <button
+              className="habit-icon-button"
+              onClick={() => setShowIconPicker(!showIconPicker)}
+              style={{ background: `${habit.color}22` }}
             >
-              {habit.name || 'Unnamed'}
-            </h2>
+              {habit.icon || '○'}
+            </button>
+            {isEditing ? (
+              <input
+                type="text"
+                value={editName}
+                onChange={e => setEditName(e.target.value)}
+                onBlur={handleSaveEdit}
+                onKeyDown={handleKeyDown}
+                className="dashboard-name-input"
+                autoFocus
+              />
+            ) : (
+              <h2
+                className={`dashboard-name ${canRename ? 'editable' : ''}`}
+                onClick={handleStartEdit}
+                style={{ color: habit.color }}
+              >
+                {habit.name || 'Unnamed'}
+              </h2>
+            )}
+          </div>
+          {showIconPicker && (
+            <div className="icon-picker-grid">
+              {HABIT_ICONS.map(icon => (
+                <button
+                  key={icon}
+                  className={`icon-option ${habit.icon === icon ? 'selected' : ''}`}
+                  onClick={() => {
+                    onChangeIcon(habit.id, icon);
+                    setShowIconPicker(false);
+                  }}
+                >
+                  {icon}
+                </button>
+              ))}
+            </div>
           )}
           {canRename ? (
             <p className="rename-notice clickable">click to rename</p>
           ) : (
             <p className="rename-notice">{daysUntilRename}d until rename</p>
           )}
+        </div>
+
+        <div className="level-bar">
+          <div className="level-info">
+            <span className="level-badge" style={{ background: habit.color }}>Lv.{level}</span>
+            <span className="xp-text">{xpToNext} days to level up</span>
+          </div>
+          <div className="xp-bar">
+            <div
+              className="xp-fill"
+              style={{
+                width: `${((10 - xpToNext) / 10) * 100}%`,
+                background: habit.color
+              }}
+            />
+          </div>
         </div>
 
         <div className="dashboard-days">
@@ -124,9 +172,19 @@ export function HabitDashboard({ habit, onClose, onToggleDay, onRename, onDelete
           </div>
           <div className="stat">
             <span className="stat-value" style={{ color: currentStreak > 0 ? habit.color : undefined }}>
-              {currentStreak}
+              {currentStreak}{currentStreak >= 7 && '🔥'}
             </span>
             <span className="stat-label">streak</span>
+          </div>
+          <div className="stat">
+            <span className="stat-value">{bestStreak}</span>
+            <span className="stat-label">best</span>
+          </div>
+          <div className="stat">
+            <span className="stat-value" style={{ color: completionRate >= 70 ? '#41B3A3' : completionRate >= 40 ? '#E8A87C' : '#E27D60' }}>
+              {completionRate}%
+            </span>
+            <span className="stat-label">rate</span>
           </div>
         </div>
 
@@ -166,4 +224,43 @@ function calculateStreak(habit: Habit): number {
   }
 
   return streak;
+}
+
+function calculateBestStreak(habit: Habit): number {
+  const completedDates = habit.records
+    .filter(r => r.completed)
+    .map(r => r.date)
+    .sort();
+
+  if (completedDates.length === 0) return 0;
+
+  let bestStreak = 1;
+  let currentStreak = 1;
+
+  for (let i = 1; i < completedDates.length; i++) {
+    const prev = new Date(completedDates[i - 1]);
+    const curr = new Date(completedDates[i]);
+    const diffDays = Math.round((curr.getTime() - prev.getTime()) / (1000 * 60 * 60 * 24));
+
+    if (diffDays === 1) {
+      currentStreak++;
+      bestStreak = Math.max(bestStreak, currentStreak);
+    } else {
+      currentStreak = 1;
+    }
+  }
+
+  return bestStreak;
+}
+
+function calculateCompletionRate(habit: Habit): number {
+  const createdDate = new Date(habit.createdAt);
+  createdDate.setHours(0, 0, 0, 0);
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  const totalDays = Math.max(1, Math.floor((today.getTime() - createdDate.getTime()) / (1000 * 60 * 60 * 24)) + 1);
+  const completedDays = habit.records.filter(r => r.completed).length;
+
+  return Math.round((completedDays / totalDays) * 100);
 }

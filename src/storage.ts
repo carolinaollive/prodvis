@@ -19,7 +19,7 @@ export function saveHabits(data: HabitData): void {
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
 }
 
-export function createHabit(name: string, existingHabits: Habit[]): Habit {
+export function createHabit(name: string, existingHabits: Habit[], icon?: string): Habit {
   const usedColors = existingHabits.map(h => h.color);
   const availableColor = HABIT_COLORS.find(c => !usedColors.includes(c)) || HABIT_COLORS[0];
   const now = new Date().toISOString();
@@ -28,6 +28,7 @@ export function createHabit(name: string, existingHabits: Habit[]): Habit {
     id: crypto.randomUUID(),
     name,
     color: availableColor,
+    icon: icon || '○',
     createdAt: now,
     lastRenamedAt: now,
     records: [],

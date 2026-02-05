@@ -13,7 +13,7 @@ interface DayStatus {
   status: 'completed' | 'missed' | 'future';
 }
 
-function getDayStatuses(habit: Habit): { statuses: DayStatus[]; todayCompleted: boolean } {
+function getDayStatuses(habit: Habit): { statuses: DayStatus[]; todayCompleted: boolean; streak: number } {
   const today = new Date();
   today.setHours(0, 0, 0, 0);
   const todayStr = today.toISOString().split('T')[0];
@@ -41,20 +41,27 @@ function getDayStatuses(habit: Habit): { statuses: DayStatus[]; todayCompleted: 
     }
   }
 
-  return { statuses, todayCompleted: recordMap.get(todayStr) || false };
-}
-
-function getInitials(name: string): string {
-  if (!name) return '?';
-  const words = name.trim().split(/\s+/);
-  if (words.length === 1) {
-    return words[0].substring(0, 2).toUpperCase();
+  // Calculate streak
+  let streak = 0;
+  let checkDate = new Date(today);
+  if (!recordMap.get(todayStr)) {
+    checkDate.setDate(checkDate.getDate() - 1);
   }
-  return words.slice(0, 2).map(w => w[0]).join('').toUpperCase();
+  while (true) {
+    const dateStr = checkDate.toISOString().split('T')[0];
+    if (recordMap.get(dateStr)) {
+      streak++;
+      checkDate.setDate(checkDate.getDate() - 1);
+    } else {
+      break;
+    }
+  }
+
+  return { statuses, todayCompleted: recordMap.get(todayStr) || false, streak };
 }
 
 export function HabitLine({ habit, onClick }: HabitLineProps) {
-  const { statuses: dayStatuses, todayCompleted } = useMemo(() => getDayStatuses(habit), [habit]);
+  const { statuses: dayStatuses, todayCompleted, streak } = useMemo(() => getDayStatuses(habit), [habit]);
   const [showTooltip, setShowTooltip] = useState(false);
   const [isActive, setIsActive] = useState(false);
   const [hoverProgress, setHoverProgress] = useState(0);
@@ -63,17 +70,14 @@ export function HabitLine({ habit, onClick }: HabitLineProps) {
   const progressInterval = useRef<number | null>(null);
 
   const handleMouseEnter = useCallback(() => {
-    // Show tooltip after 1.5s
     tooltipTimer.current = window.setTimeout(() => {
       setShowTooltip(true);
     }, 1500);
 
-    // Make active (clickable, not click-through) after 2s
     activeTimer.current = window.setTimeout(() => {
       setIsActive(true);
     }, 2000);
 
-    // Progress indicator
     const startTime = Date.now();
     progressInterval.current = window.setInterval(() => {
       const elapsed = Date.now() - startTime;
@@ -86,18 +90,12 @@ export function HabitLine({ habit, onClick }: HabitLineProps) {
   }, []);
 
   const handleMouseLeave = useCallback(() => {
-    if (tooltipTimer.current) {
-      clearTimeout(tooltipTimer.current);
-      tooltipTimer.current = null;
-    }
-    if (activeTimer.current) {
-      clearTimeout(activeTimer.current);
-      activeTimer.current = null;
-    }
-    if (progressInterval.current) {
-      clearInterval(progressInterval.current);
-      progressInterval.current = null;
-    }
+    if (tooltipTimer.current) clearTimeout(tooltipTimer.current);
+    if (activeTimer.current) clearTimeout(activeTimer.current);
+    if (progressInterval.current) clearInterval(progressInterval.current);
+    tooltipTimer.current = null;
+    activeTimer.current = null;
+    progressInterval.current = null;
     setShowTooltip(false);
     setIsActive(false);
     setHoverProgress(0);
@@ -117,8 +115,6 @@ export function HabitLine({ habit, onClick }: HabitLineProps) {
     };
   }, []);
 
-  const initials = getInitials(habit.name);
-
   return (
     <div
       className={`habit-line-container ${isActive ? 'active' : 'inactive'} ${!todayCompleted ? 'needs-attention' : ''}`}
@@ -127,68 +123,70 @@ export function HabitLine({ habit, onClick }: HabitLineProps) {
       onMouseLeave={handleMouseLeave}
       style={{ '--habit-color': habit.color } as React.CSSProperties}
     >
-      <span className="habit-initials" style={{ color: habit.color }}>
-        {initials}
-      </span>
+      <span className="habit-icon">{habit.icon || '○'}</span>
 
-      <div className="habit-tooltip-container">
-        <div className={`habit-tooltip ${showTooltip ? 'visible' : ''}`} style={{ color: habit.color }}>
-          {habit.name}
-        </div>
+      <div className={`habit-tooltip ${showTooltip ? 'visible' : ''}`} style={{ color: habit.color }}>
+        {habit.name}
       </div>
 
       {hoverProgress > 0 && hoverProgress < 1 && (
         <div className="hover-progress" style={{ width: `${hoverProgress * 100}%` }} />
       )}
 
-      <svg
-        className="habit-line"
-        viewBox={`0 0 ${DAYS_TO_DISPLAY * 10} 20`}
-        preserveAspectRatio="none"
-      >
-        <defs>
-          <linearGradient id={`gradient-${habit.id}`} x1="0%" y1="0%" x2="100%" y2="0%">
-            {dayStatuses.map((day, index) => {
-              const percent = (index / (dayStatuses.length - 1)) * 100;
-              let opacity: number;
+      <div className="habit-line-wrapper">
+        <svg
+          className="habit-line"
+          viewBox={`0 0 ${DAYS_TO_DISPLAY * 10} 20`}
+          preserveAspectRatio="none"
+        >
+          <defs>
+            <linearGradient id={`gradient-${habit.id}`} x1="0%" y1="0%" x2="100%" y2="0%">
+              {dayStatuses.map((day, index) => {
+                const percent = (index / (dayStatuses.length - 1)) * 100;
+                let opacity: number;
 
-              if (day.status === 'completed') {
-                opacity = 1;
-              } else if (day.status === 'missed') {
-                opacity = 0;
-              } else {
-                opacity = 0.25;
-              }
+                if (day.status === 'completed') {
+                  opacity = 1;
+                } else if (day.status === 'missed') {
+                  opacity = 0;
+                } else {
+                  opacity = 0.25;
+                }
 
-              return (
-                <stop
-                  key={day.date}
-                  offset={`${percent}%`}
-                  stopColor={habit.color}
-                  stopOpacity={opacity}
-                />
-              );
-            })}
-          </linearGradient>
-          <filter id={`glow-${habit.id}`}>
-            <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
-            <feMerge>
-              <feMergeNode in="coloredBlur"/>
-              <feMergeNode in="SourceGraphic"/>
-            </feMerge>
-          </filter>
-        </defs>
-        <rect
-          x="0"
-          y="5"
-          width={DAYS_TO_DISPLAY * 10}
-          height="10"
-          rx="5"
-          fill={`url(#gradient-${habit.id})`}
-          className="habit-line-rect"
-          filter={isActive ? `url(#glow-${habit.id})` : undefined}
-        />
-      </svg>
+                return (
+                  <stop
+                    key={day.date}
+                    offset={`${percent}%`}
+                    stopColor={habit.color}
+                    stopOpacity={opacity}
+                  />
+                );
+              })}
+            </linearGradient>
+            <filter id={`glow-${habit.id}`}>
+              <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+              <feMerge>
+                <feMergeNode in="coloredBlur"/>
+                <feMergeNode in="SourceGraphic"/>
+              </feMerge>
+            </filter>
+          </defs>
+          <rect
+            x="0"
+            y="5"
+            width={DAYS_TO_DISPLAY * 10}
+            height="10"
+            rx="5"
+            fill={`url(#gradient-${habit.id})`}
+            className="habit-line-rect"
+            filter={isActive ? `url(#glow-${habit.id})` : undefined}
+          />
+        </svg>
+      </div>
+
+      {streak >= 3 && (
+        <span className="streak-flame">🔥</span>
+      )}
     </div>
   );
 }
