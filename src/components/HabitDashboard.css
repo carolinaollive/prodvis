@@ -4,26 +4,31 @@
   left: 0;
   right: 0;
   bottom: 0;
-  background: rgba(0, 0, 0, 0.6);
+  background: rgba(0, 0, 0, 0.7);
   display: flex;
   align-items: flex-start;
   justify-content: center;
   z-index: 100;
-  padding-top: 10px;
-  backdrop-filter: blur(2px);
+  padding: 20px;
+  backdrop-filter: blur(4px);
+  -webkit-backdrop-filter: blur(4px);
   pointer-events: auto;
+  overflow-y: auto;
 }
 
 .dashboard-panel {
-  background: rgba(18, 18, 18, 0.95);
-  border-radius: 12px;
-  padding: 14px;
-  width: 240px;
-  max-height: 80vh;
+  background: rgba(18, 18, 20, 0.98);
+  border-radius: 16px;
+  padding: 18px;
+  width: 260px;
+  max-height: calc(100vh - 40px);
   overflow-y: auto;
+  overflow-x: hidden;
   position: relative;
-  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.6);
-  border: 1px solid rgba(255, 255, 255, 0.08);
+  box-shadow:
+    0 24px 80px rgba(0, 0, 0, 0.6),
+    0 0 0 1px rgba(255, 255, 255, 0.06);
+  flex-shrink: 0;
 }
 
 .dashboard-accent {
@@ -32,51 +37,51 @@
   left: 0;
   right: 0;
   height: 3px;
-  border-radius: 12px 12px 0 0;
+  border-radius: 16px 16px 0 0;
 }
 
 .dashboard-close {
   position: absolute;
-  top: 10px;
-  right: 10px;
-  background: transparent;
+  top: 12px;
+  right: 12px;
+  background: rgba(255, 255, 255, 0.05);
   border: none;
-  font-size: 18px;
-  color: #555;
+  font-size: 16px;
+  color: #666;
   cursor: pointer;
   padding: 0;
-  width: 20px;
-  height: 20px;
+  width: 24px;
+  height: 24px;
   display: flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
+  border-radius: 8px;
   transition: all 0.2s;
   line-height: 1;
 }
 
 .dashboard-close:hover {
   color: #fff;
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.12);
 }
 
 .dashboard-header {
-  margin-bottom: 12px;
-  padding-right: 24px;
+  margin-bottom: 16px;
+  padding-right: 28px;
 }
 
 .header-row {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .habit-icon-button {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border: none;
-  border-radius: 8px;
-  font-size: 16px;
+  border-radius: 10px;
+  font-size: 18px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -86,26 +91,28 @@
 }
 
 .habit-icon-button:hover {
-  transform: scale(1.1);
+  transform: scale(1.08);
 }
 
 .icon-picker-grid {
   display: flex;
   flex-wrap: wrap;
-  gap: 4px;
-  margin: 8px 0;
-  padding: 8px;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 8px;
+  gap: 6px;
+  margin: 12px 0;
+  padding: 10px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
+  max-height: 140px;
+  overflow-y: auto;
 }
 
 .icon-picker-grid .icon-option {
-  width: 28px;
-  height: 28px;
+  width: 32px;
+  height: 32px;
   border: 1px solid transparent;
-  background: rgba(255, 255, 255, 0.05);
-  border-radius: 6px;
-  font-size: 14px;
+  background: rgba(255, 255, 255, 0.06);
+  border-radius: 8px;
+  font-size: 16px;
   cursor: pointer;
   display: flex;
   align-items: center;
@@ -114,7 +121,7 @@
 }
 
 .icon-picker-grid .icon-option:hover {
-  background: rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.12);
   transform: scale(1.1);
 }
 
@@ -124,7 +131,7 @@
 }
 
 .dashboard-name {
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 600;
   margin: 0;
   transition: opacity 0.2s;
@@ -139,12 +146,12 @@
 }
 
 .dashboard-name-input {
-  font-size: 15px;
+  font-size: 17px;
   font-weight: 600;
-  background: rgba(255, 255, 255, 0.05);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 4px;
-  padding: 4px 8px;
+  background: rgba(255, 255, 255, 0.06);
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+  padding: 6px 10px;
   color: inherit;
   width: 100%;
   box-sizing: border-box;
@@ -152,77 +159,79 @@
 
 .dashboard-name-input:focus {
   outline: none;
-  border-color: rgba(255, 255, 255, 0.2);
+  border-color: rgba(255, 255, 255, 0.25);
 }
 
 .rename-notice {
-  font-size: 9px;
-  color: #444;
-  margin: 4px 0 0 0;
+  font-size: 10px;
+  color: #555;
+  margin: 6px 0 0 0;
   text-transform: lowercase;
 }
 
 .rename-notice.clickable {
-  color: #555;
+  color: #666;
 }
 
+/* Level/XP bar */
 .level-bar {
-  margin-bottom: 12px;
-  padding: 8px;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 8px;
+  margin-bottom: 16px;
+  padding: 10px 12px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 10px;
 }
 
 .level-info {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin-bottom: 6px;
+  margin-bottom: 8px;
 }
 
 .level-badge {
-  font-size: 10px;
+  font-size: 11px;
   font-weight: 700;
-  padding: 2px 6px;
-  border-radius: 4px;
+  padding: 3px 8px;
+  border-radius: 6px;
   color: #000;
 }
 
 .xp-text {
-  font-size: 9px;
+  font-size: 10px;
   color: #666;
 }
 
 .xp-bar {
-  height: 4px;
-  background: rgba(255, 255, 255, 0.1);
-  border-radius: 2px;
+  height: 5px;
+  background: rgba(255, 255, 255, 0.08);
+  border-radius: 3px;
   overflow: hidden;
 }
 
 .xp-fill {
   height: 100%;
-  border-radius: 2px;
+  border-radius: 3px;
   transition: width 0.3s ease;
 }
 
+/* Day buttons */
 .dashboard-days {
   display: flex;
-  gap: 4px;
-  margin-bottom: 12px;
+  gap: 6px;
+  margin-bottom: 16px;
 }
 
 .day-button {
   flex: 1;
-  padding: 6px 2px;
-  background: rgba(255, 255, 255, 0.03);
+  padding: 8px 4px;
+  background: rgba(255, 255, 255, 0.04);
   border: 1px solid rgba(255, 255, 255, 0.06);
-  border-radius: 6px;
+  border-radius: 8px;
   cursor: pointer;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 2px;
+  gap: 3px;
   transition: all 0.2s;
   color: #666;
   position: relative;
@@ -230,18 +239,18 @@
 
 .day-button:hover {
   border-color: var(--habit-color);
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.06);
 }
 
 .day-button.completed {
   background: var(--habit-color);
   border-color: var(--habit-color);
-  color: rgba(0, 0, 0, 0.8);
+  color: rgba(0, 0, 0, 0.85);
 }
 
 .day-button.today {
   border-width: 2px;
-  border-color: rgba(255, 255, 255, 0.3);
+  border-color: rgba(255, 255, 255, 0.35);
 }
 
 .day-button.today.completed {
@@ -249,27 +258,29 @@
 }
 
 .day-name {
-  font-size: 8px;
+  font-size: 9px;
   text-transform: uppercase;
-  opacity: 0.7;
+  opacity: 0.75;
+  font-weight: 500;
 }
 
 .day-num {
-  font-size: 11px;
-  font-weight: 600;
+  font-size: 13px;
+  font-weight: 700;
 }
 
 .day-check {
   position: absolute;
-  top: 2px;
-  right: 2px;
-  font-size: 7px;
+  top: 3px;
+  right: 3px;
+  font-size: 8px;
 }
 
+/* Stats */
 .dashboard-stats {
   display: flex;
   gap: 8px;
-  margin-bottom: 12px;
+  margin-bottom: 16px;
 }
 
 .stat {
@@ -277,58 +288,65 @@
   display: flex;
   flex-direction: column;
   align-items: center;
-  padding: 8px;
-  background: rgba(255, 255, 255, 0.03);
-  border-radius: 6px;
+  padding: 10px 6px;
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 8px;
 }
 
 .stat-value {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 700;
   color: #fff;
   line-height: 1;
 }
 
 .stat-label {
-  font-size: 8px;
+  font-size: 9px;
   color: #555;
   text-transform: uppercase;
-  margin-top: 2px;
+  margin-top: 4px;
+  font-weight: 500;
 }
 
+/* Delete button */
 .delete-button {
   width: 100%;
-  padding: 6px;
+  padding: 10px;
   background: transparent;
-  border: 1px solid rgba(255, 80, 80, 0.3);
-  color: rgba(255, 80, 80, 0.6);
-  border-radius: 4px;
+  border: 1px solid rgba(255, 80, 80, 0.25);
+  color: rgba(255, 80, 80, 0.5);
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 9px;
+  font-size: 11px;
+  font-weight: 500;
   text-transform: lowercase;
   transition: all 0.2s;
 }
 
 .delete-button:hover {
   background: rgba(255, 80, 80, 0.1);
-  border-color: rgba(255, 80, 80, 0.5);
-  color: rgba(255, 80, 80, 0.9);
+  border-color: rgba(255, 80, 80, 0.4);
+  color: rgba(255, 80, 80, 0.85);
 }
 
 /* Custom scrollbar */
-.dashboard-panel::-webkit-scrollbar {
-  width: 4px;
+.dashboard-panel::-webkit-scrollbar,
+.icon-picker-grid::-webkit-scrollbar {
+  width: 5px;
 }
 
-.dashboard-panel::-webkit-scrollbar-track {
+.dashboard-panel::-webkit-scrollbar-track,
+.icon-picker-grid::-webkit-scrollbar-track {
   background: transparent;
 }
 
-.dashboard-panel::-webkit-scrollbar-thumb {
-  background: rgba(255, 255, 255, 0.15);
-  border-radius: 2px;
+.dashboard-panel::-webkit-scrollbar-thumb,
+.icon-picker-grid::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 3px;
 }
 
-.dashboard-panel::-webkit-scrollbar-thumb:hover {
-  background: rgba(255, 255, 255, 0.25);
+.dashboard-panel::-webkit-scrollbar-thumb:hover,
+.icon-picker-grid::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.2);
 }

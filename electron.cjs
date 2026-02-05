@@ -41,13 +41,13 @@ function createWindow() {
 }
 
 function createTray() {
-  // Create a proper template image for macOS menu bar (22x22)
-  // Using horizontal bars to represent habit tracking lines
+  // Custom Enduring icon - cross with circles at ends
+  // Simplified for 22x22 menu bar size
   const iconSvg = `
-    <svg width="22" height="22" viewBox="0 0 22 22" xmlns="http://www.w3.org/2000/svg">
-      <rect x="4" y="5" width="14" height="2" rx="1" fill="black"/>
-      <rect x="4" y="10" width="10" height="2" rx="1" fill="black"/>
-      <rect x="4" y="15" width="12" height="2" rx="1" fill="black"/>
+    <svg width="22" height="22" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      <path d="M16 8L19 8C20.66 8 22 6.66 22 5C22 3.34 20.66 2 19 2C17.34 2 16 3.34 16 5L16 8L8 8L8 5C8 3.34 6.66 2 5 2C3.34 2 2 3.34 2 5C2 6.66 3.34 8 5 8L8 8L8 16H16V8Z" fill="black"/>
+      <path d="M16 16L19 16C20.66 16 22 17.34 22 19C22 20.66 20.66 22 19 22C17.34 22 16 20.66 16 19L16 16Z" fill="black"/>
+      <path d="M5 16L8 16L8 19C8 20.66 6.66 22 5 22C3.34 22 2 20.66 2 19C2 17.34 3.34 16 5 16Z" fill="black"/>
     </svg>
   `;
 

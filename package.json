@@ -21,19 +21,26 @@
     },
     "files": [
       "dist/**/*",
-      "electron.cjs"
+      "electron.cjs",
+      "assets/**/*"
+    ],
+    "extraResources": [
+      {
+        "from": "assets",
+        "to": "assets"
+      }
     ],
     "win": {
       "target": "portable",
-      "icon": "public/icon.png"
+      "icon": "assets/icon.svg"
     },
     "linux": {
       "target": "AppImage",
-      "icon": "public/icon.png"
+      "icon": "assets/icon.svg"
     },
     "mac": {
       "target": "dmg",
-      "icon": "public/icon.png"
+      "icon": "assets/icon.svg"
     }
   },
   "dependencies": {
