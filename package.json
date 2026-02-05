@@ -31,16 +31,13 @@
       }
     ],
     "win": {
-      "target": "portable",
-      "icon": "assets/icon.svg"
+      "target": "portable"
     },
     "linux": {
-      "target": "AppImage",
-      "icon": "assets/icon.svg"
+      "target": "AppImage"
     },
     "mac": {
-      "target": "dmg",
-      "icon": "assets/icon.svg"
+      "target": "dmg"
     }
   },
   "dependencies": {
