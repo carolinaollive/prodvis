@@ -14,8 +14,8 @@ function createWindow() {
   win = new BrowserWindow({
     width: winWidth,
     height: winHeight,
-    x: screenWidth - winWidth - 12,
-    y: 36,
+    x: screenWidth - winWidth - 2,
+    y: 32,
     frame: false,
     transparent: true,
     alwaysOnTop: true,
@@ -59,7 +59,7 @@ function createTray() {
   icon.setTemplateImage(true);
 
   tray = new Tray(icon);
-  tray.setToolTip('Habit Tracker');
+  tray.setToolTip('Enduring');
 
   const contextMenu = Menu.buildFromTemplate([
     {
@@ -76,12 +76,12 @@ function createTray() {
       click: () => {
         const primaryDisplay = screen.getPrimaryDisplay();
         const { width: screenWidth } = primaryDisplay.workAreaSize;
-        win.setPosition(screenWidth - 320 - 12, 36);
+        win.setPosition(screenWidth - 320 - 2, 32);
         win.show();
       }
     },
     { type: 'separator' },
-    { label: 'Quit Habit Tracker', click: () => app.quit() }
+    { label: 'Quit Enduring', click: () => app.quit() }
   ]);
 
   tray.setContextMenu(contextMenu);

@@ -1,6 +1,6 @@
 {
-  "name": "habit-tracker",
-  "productName": "Habit Tracker",
+  "name": "enduring",
+  "productName": "Enduring",
   "private": true,
   "version": "1.0.0",
   "type": "module",
@@ -14,8 +14,8 @@
     "electron:build": "npm run build && electron-builder"
   },
   "build": {
-    "appId": "com.habittracker.app",
-    "productName": "Habit Tracker",
+    "appId": "com.enduring.app",
+    "productName": "Enduring",
     "directories": {
       "output": "release"
     },
