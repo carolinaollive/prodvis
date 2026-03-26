@@ -1,4 +1,4 @@
-const { app, BrowserWindow, screen, Tray, Menu, nativeImage } = require('electron');
+const { app, BrowserWindow, screen, Tray, Menu, nativeImage, ipcMain } = require('electron');
 const path = require('path');
 
 let tray = null;
@@ -25,12 +25,16 @@ function createWindow() {
     webPreferences: {
       nodeIntegration: false,
       contextIsolation: true,
+      preload: path.join(__dirname, 'preload.cjs'),
     },
   });
 
   // Keep window level above others and visible on all workspaces
   win.setAlwaysOnTop(true, 'floating', 1);
   win.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
+
+  // Enable click-through on transparent areas by default
+  win.setIgnoreMouseEvents(true, { forward: true });
 
   // In production, load the built files
   if (app.isPackaged) {
@@ -40,36 +44,31 @@ function createWindow() {
   }
 }
 
+// IPC handlers for click-through toggling from renderer
+function setupIPC() {
+  ipcMain.on('set-ignore-mouse-events', (_event, ignore, options) => {
+    if (win) {
+      win.setIgnoreMouseEvents(ignore, options || {});
+    }
+  });
+}
+
 function createTray() {
-  // Load the Enduring icon from assets folder
-  // For macOS, we need a PNG template image
-  let iconPath;
-  if (app.isPackaged) {
-    iconPath = path.join(process.resourcesPath, 'assets', 'iconTemplate.png');
-  } else {
-    iconPath = path.join(__dirname, 'assets', 'iconTemplate.png');
-  }
+  const assetsDir = app.isPackaged
+    ? path.join(process.resourcesPath, 'assets')
+    : path.join(__dirname, 'assets');
 
   let icon;
-  try {
+
+  if (process.platform === 'darwin') {
+    // macOS: use trayIcon.png (16px) + trayIcon@2x.png (32px retina) as template
+    const iconPath = path.join(assetsDir, 'trayIcon.png');
     icon = nativeImage.createFromPath(iconPath);
     icon.setTemplateImage(true);
-  } catch (e) {
-    // Fallback: create a simple icon if file not found
-    const fallbackSvg = `<svg width="16" height="16" viewBox="0 0 16 16" xmlns="http://www.w3.org/2000/svg">
-      <circle cx="4" cy="4" r="2" fill="black"/>
-      <circle cx="12" cy="4" r="2" fill="black"/>
-      <circle cx="4" cy="12" r="2" fill="black"/>
-      <circle cx="12" cy="12" r="2" fill="black"/>
-      <rect x="5" y="3" width="6" height="2" fill="black"/>
-      <rect x="5" y="11" width="6" height="2" fill="black"/>
-      <rect x="3" y="5" width="2" height="6" fill="black"/>
-      <rect x="11" y="5" width="2" height="6" fill="black"/>
-    </svg>`;
-    icon = nativeImage.createFromDataURL(
-      `data:image/svg+xml;base64,${Buffer.from(fallbackSvg).toString('base64')}`
-    );
-    icon.setTemplateImage(true);
+  } else {
+    // Windows/Linux: use the full-color 32px icon
+    const iconPath = path.join(assetsDir, 'icon-32.png');
+    icon = nativeImage.createFromPath(iconPath);
   }
 
   tray = new Tray(icon);
@@ -116,6 +115,7 @@ app.whenReady().then(() => {
     app.dock.hide();
   }
 
+  setupIPC();
   createWindow();
   createTray();
 });

@@ -23,6 +23,7 @@
     "files": [
       "dist/**/*",
       "electron.cjs",
+      "preload.cjs",
       "assets/**/*"
     ],
     "extraResources": [

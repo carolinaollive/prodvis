@@ -7,66 +7,33 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-/* Click-through when inactive */
-.habit-line-container.inactive {
-  pointer-events: none;
-}
-
-/* Only the SVG line itself captures hover */
-.habit-line-container.inactive .habit-line {
-  pointer-events: auto;
+  transition: opacity 0.25s ease;
 }
 
 .habit-line-container.active {
   cursor: pointer;
-  pointer-events: auto;
 }
 
 .habit-line-container.needs-attention .habit-line-rect {
-  animation: subtle-pulse 2.5s ease-in-out infinite;
+  opacity: 0.55;
 }
 
-@keyframes subtle-pulse {
-  0%, 100% {
-    filter: brightness(1);
-    opacity: 1;
-  }
-  50% {
-    filter: brightness(1.2);
-    opacity: 0.85;
-  }
-}
-
-/* Icon/Label styling - LARGER */
 .habit-icon {
   font-size: 13px;
   opacity: 0.85;
   min-width: 18px;
   text-align: center;
-  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  pointer-events: none;
-  filter: drop-shadow(0 1px 2px rgba(0,0,0,0.3));
+  transition: opacity 0.2s ease;
 }
 
 .habit-line-container:hover .habit-icon {
   opacity: 1;
-  transform: scale(1.15);
-  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.4));
 }
 
-/* Line wrapper for scaling */
 .habit-line-wrapper {
   flex: 1;
   height: 100%;
   position: relative;
-  transition: transform 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-}
-
-.habit-line-container.active:hover .habit-line-wrapper {
-  transform: scaleY(1.5);
 }
 
 .habit-line {
@@ -76,10 +43,9 @@
 }
 
 .habit-line-rect {
-  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 0.3s ease;
 }
 
-/* Tooltip - elegant and readable */
 .habit-tooltip {
   position: absolute;
   left: 26px;
@@ -90,54 +56,32 @@
   white-space: nowrap;
   text-shadow: 0 1px 4px rgba(0,0,0,0.7);
   opacity: 0;
-  transform: translateY(6px);
-  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  transition: opacity 0.15s ease;
   pointer-events: none;
   z-index: 10;
 }
 
 .habit-tooltip.visible {
   opacity: 1;
-  transform: translateY(0);
 }
 
-/* Streak flame indicator */
 .streak-flame {
   position: absolute;
   right: 6px;
   top: 50%;
   transform: translateY(-50%);
   font-size: 10px;
-  opacity: 0.9;
-  animation: flame-dance 1.5s ease-in-out infinite;
+  opacity: 0.8;
   pointer-events: none;
-  filter: drop-shadow(0 1px 3px rgba(255,100,0,0.4));
 }
 
-@keyframes flame-dance {
-  0%, 100% {
-    opacity: 0.9;
-    transform: translateY(-50%) scale(1) rotate(-2deg);
-  }
-  33% {
-    opacity: 1;
-    transform: translateY(-52%) scale(1.05) rotate(2deg);
-  }
-  66% {
-    opacity: 0.95;
-    transform: translateY(-48%) scale(1.02) rotate(-1deg);
-  }
-}
-
-/* Hover progress indicator */
 .hover-progress {
   position: absolute;
   bottom: 0;
   left: 18px;
-  height: 2px;
-  background: linear-gradient(90deg, var(--habit-color) 0%, transparent 100%);
-  opacity: 0.7;
+  height: 1px;
+  background: var(--habit-color);
+  opacity: 0.4;
   border-radius: 1px;
-  transition: width 0.05s linear;
   pointer-events: none;
 }

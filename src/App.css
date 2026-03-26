@@ -7,7 +7,6 @@
   padding: 8px 4px;
   box-sizing: border-box;
   background: transparent;
-  pointer-events: none;
 }
 
 /* Main container - Speechify-inspired glass pill */
@@ -23,10 +22,8 @@
   -webkit-backdrop-filter: blur(12px) saturate(150%);
   box-shadow: 0 0 0 1px rgba(255, 255, 255, 0.03);
   transition: background 0.35s cubic-bezier(0.4, 0, 0.2, 1),
-              backdrop-filter 0.35s cubic-bezier(0.4, 0, 0.2, 1),
               box-shadow 0.35s cubic-bezier(0.4, 0, 0.2, 1);
   position: relative;
-  pointer-events: auto;
 }
 
 /* Glass effect on hover */
@@ -49,8 +46,7 @@
   justify-content: flex-end;
   cursor: pointer;
   opacity: 0;
-  transition: opacity 0.25s cubic-bezier(0.4, 0, 0.2, 1);
-  pointer-events: auto;
+  transition: opacity 0.2s ease;
 }
 
 .habit-lines:hover .empty-slot {
@@ -90,7 +86,6 @@
   padding: 20px;
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  pointer-events: auto;
   overflow-y: auto;
 }
 

@@ -27,16 +27,22 @@ function App() {
     setNewHabitName('');
     setNewHabitIcon(HABIT_ICONS[0]);
     setShowAddModal(true);
+    window.electronAPI?.setIgnoreMouseEvents(false);
   }, [habits]);
+
+  const closeModal = useCallback(() => {
+    setShowAddModal(false);
+    setNewHabitName('');
+    window.electronAPI?.setIgnoreMouseEvents(true, { forward: true });
+  }, []);
 
   const handleConfirmAdd = useCallback(() => {
     if (newHabitName.trim()) {
       const newHabit = createHabit(newHabitName.trim(), habits, newHabitIcon);
       setHabits(prev => [...prev, newHabit]);
     }
-    setShowAddModal(false);
-    setNewHabitName('');
-  }, [newHabitName, habits, newHabitIcon]);
+    closeModal();
+  }, [newHabitName, habits, newHabitIcon, closeModal]);
 
   const handleChangeIcon = useCallback((habitId: string, icon: string) => {
     setHabits(prev => prev.map(habit => {
@@ -91,9 +97,23 @@ function App() {
     habitSlots.push(null as unknown as Habit);
   }
 
+  const handleContainerEnter = useCallback(() => {
+    window.electronAPI?.setIgnoreMouseEvents(false);
+  }, []);
+
+  const handleContainerLeave = useCallback(() => {
+    if (!showAddModal && !selectedHabitId) {
+      window.electronAPI?.setIgnoreMouseEvents(true, { forward: true });
+    }
+  }, [showAddModal, selectedHabitId]);
+
   return (
     <div className="app">
-      <div className="habit-lines">
+      <div
+        className="habit-lines"
+        onMouseEnter={handleContainerEnter}
+        onMouseLeave={handleContainerLeave}
+      >
         {habitSlots.map((habit, index) => (
           habit ? (
             <HabitLine
@@ -114,7 +134,7 @@ function App() {
       </div>
 
       {showAddModal && (
-        <div className="add-modal-overlay" onClick={() => setShowAddModal(false)}>
+        <div className="add-modal-overlay" onClick={closeModal}>
           <div className="add-modal" onClick={e => e.stopPropagation()}>
             <input
               type="text"
@@ -122,7 +142,7 @@ function App() {
               onChange={e => setNewHabitName(e.target.value)}
               onKeyDown={e => {
                 if (e.key === 'Enter') handleConfirmAdd();
-                if (e.key === 'Escape') setShowAddModal(false);
+                if (e.key === 'Escape') closeModal();
               }}
               placeholder="Name your habit..."
               autoFocus
@@ -139,7 +159,7 @@ function App() {
               ))}
             </div>
             <div className="add-modal-buttons">
-              <button onClick={() => setShowAddModal(false)}>Cancel</button>
+              <button onClick={closeModal}>Cancel</button>
               <button onClick={handleConfirmAdd} className="confirm">Add</button>
             </div>
           </div>

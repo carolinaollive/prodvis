@@ -1,3 +1,12 @@
+// Electron preload API for click-through control
+declare global {
+  interface Window {
+    electronAPI?: {
+      setIgnoreMouseEvents: (ignore: boolean, options?: { forward: boolean }) => void;
+    };
+  }
+}
+
 export interface DayRecord {
   date: string; // YYYY-MM-DD format
   completed: boolean;

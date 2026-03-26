@@ -63,62 +63,34 @@ function getDayStatuses(habit: Habit): { statuses: DayStatus[]; todayCompleted: 
 export function HabitLine({ habit, onClick }: HabitLineProps) {
   const { statuses: dayStatuses, todayCompleted, streak } = useMemo(() => getDayStatuses(habit), [habit]);
   const [showTooltip, setShowTooltip] = useState(false);
-  const [isActive, setIsActive] = useState(false);
-  const [hoverProgress, setHoverProgress] = useState(0);
   const tooltipTimer = useRef<number | null>(null);
-  const activeTimer = useRef<number | null>(null);
-  const progressInterval = useRef<number | null>(null);
 
   const handleMouseEnter = useCallback(() => {
+    // Tell Electron to capture mouse events on this region
+    window.electronAPI?.setIgnoreMouseEvents(false);
     tooltipTimer.current = window.setTimeout(() => {
       setShowTooltip(true);
-    }, 1500);
-
-    activeTimer.current = window.setTimeout(() => {
-      setIsActive(true);
-    }, 2000);
-
-    const startTime = Date.now();
-    progressInterval.current = window.setInterval(() => {
-      const elapsed = Date.now() - startTime;
-      const progress = Math.min(elapsed / 2000, 1);
-      setHoverProgress(progress);
-      if (progress >= 1) {
-        clearInterval(progressInterval.current!);
-      }
-    }, 50);
+    }, 600);
   }, []);
 
   const handleMouseLeave = useCallback(() => {
+    // Release mouse events back to click-through
+    window.electronAPI?.setIgnoreMouseEvents(true, { forward: true });
     if (tooltipTimer.current) clearTimeout(tooltipTimer.current);
-    if (activeTimer.current) clearTimeout(activeTimer.current);
-    if (progressInterval.current) clearInterval(progressInterval.current);
     tooltipTimer.current = null;
-    activeTimer.current = null;
-    progressInterval.current = null;
     setShowTooltip(false);
-    setIsActive(false);
-    setHoverProgress(0);
   }, []);
-
-  const handleClick = useCallback(() => {
-    if (isActive) {
-      onClick();
-    }
-  }, [isActive, onClick]);
 
   useEffect(() => {
     return () => {
       if (tooltipTimer.current) clearTimeout(tooltipTimer.current);
-      if (activeTimer.current) clearTimeout(activeTimer.current);
-      if (progressInterval.current) clearInterval(progressInterval.current);
     };
   }, []);
 
   return (
     <div
-      className={`habit-line-container ${isActive ? 'active' : 'inactive'} ${!todayCompleted ? 'needs-attention' : ''}`}
-      onClick={handleClick}
+      className={`habit-line-container ${!todayCompleted ? 'needs-attention' : ''}`}
+      onClick={onClick}
       onMouseEnter={handleMouseEnter}
       onMouseLeave={handleMouseLeave}
       style={{ '--habit-color': habit.color } as React.CSSProperties}
@@ -128,10 +100,6 @@ export function HabitLine({ habit, onClick }: HabitLineProps) {
       <div className={`habit-tooltip ${showTooltip ? 'visible' : ''}`} style={{ color: habit.color }}>
         {habit.name}
       </div>
-
-      {hoverProgress > 0 && hoverProgress < 1 && (
-        <div className="hover-progress" style={{ width: `${hoverProgress * 100}%` }} />
-      )}
 
       <div className="habit-line-wrapper">
         <svg
@@ -163,13 +131,6 @@ export function HabitLine({ habit, onClick }: HabitLineProps) {
                 );
               })}
             </linearGradient>
-            <filter id={`glow-${habit.id}`}>
-              <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
-              <feMerge>
-                <feMergeNode in="coloredBlur"/>
-                <feMergeNode in="SourceGraphic"/>
-              </feMerge>
-            </filter>
           </defs>
           <rect
             x="0"
@@ -179,7 +140,6 @@ export function HabitLine({ habit, onClick }: HabitLineProps) {
             rx="5"
             fill={`url(#gradient-${habit.id})`}
             className="habit-line-rect"
-            filter={isActive ? `url(#glow-${habit.id})` : undefined}
           />
         </svg>
       </div>

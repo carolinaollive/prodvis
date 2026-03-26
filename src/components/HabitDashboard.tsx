@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import type { Habit } from '../types';
 import { HABIT_ICONS } from '../types';
 import { canRenameHabit, getDaysUntilRename } from '../storage';
@@ -17,6 +17,16 @@ export function HabitDashboard({ habit, onClose, onToggleDay, onRename, onDelete
   const [isEditing, setIsEditing] = useState(false);
   const [editName, setEditName] = useState('');
   const [showIconPicker, setShowIconPicker] = useState(false);
+
+  // Capture mouse when dashboard opens, release when it closes
+  useEffect(() => {
+    if (habit) {
+      window.electronAPI?.setIgnoreMouseEvents(false);
+    }
+    return () => {
+      window.electronAPI?.setIgnoreMouseEvents(true, { forward: true });
+    };
+  }, [habit]);
 
   if (!habit) return null;
 
